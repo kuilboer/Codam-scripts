@@ -1,0 +1,29 @@
+#!/bin/bash
+# Create a temporary backup directory
+backup_dir="/home/okuilboe/dev/backup_main_c"
+mkdir -p "$backup_dir"
+
+# Find and move all main.c files to the backup directory, preserving directory structure
+find . -type f -name "main.c" | while read -r file; do
+    # Create the corresponding backup directory structure
+    dest_dir="$backup_dir/$(dirname "$file")"
+    mkdir -p "$dest_dir"
+    mv "$file" "$dest_dir/"
+done
+
+# Run your commands here
+echo "Running commands..."
+echo "press key to continue"
+read
+/home/okuilboe/mini-moulinette/mini-moul.sh
+# ... your commands ...
+
+# Restore the files back to their original locations
+find "$backup_dir" -type f -name "main.c" | while read -r file; do
+    # Remove the backup directory prefix to get the original location
+    orig_path="${file#$backup_dir/}"
+    mv "$file" "$(dirname "$orig_path")/"
+done
+
+# Optionally remove the backup directory if it's empty
+rm -rf "$backup_dir"
